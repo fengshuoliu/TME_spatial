@@ -15,68 +15,11 @@ The expected inputs are the ImageJ-exported text images (`.csv` or `.txt`) that 
 
 ## Important deployment note
 
-A **public hosted Streamlit app cannot directly access a visitor's own local folder path** on their laptop. Because of that, the app includes **two input modes**:
+   The app only accept upload mode, but all the analysis is computated locally. This keeps your original folder-based workflow for local use, while still making the app deployable for other users.
 
-1. **Local folder path**  
-   Use this when you run the app on your own machine or on a server that can already see the target folder. Outputs are written to:
-
-   ```text
-   <your_input_folder>/outs
-   ```
-
-2. **Upload CSV/TXT files**  
+   **Upload CSV/TXT files**  
    Use this when the app is publicly hosted. Uploaded files are stored in a temporary session workspace, and outputs can be downloaded as a ZIP from the app.
 
-This keeps your original folder-based workflow for local use, while still making the app deployable for other users.
-
-## Repo layout
-
-```text
-TME_spatial_streamlit_app/
-├── app.py
-├── src/
-│   ├── __init__.py
-│   └── tme_spatial/
-│       ├── __init__.py
-│       ├── models.py
-│       ├── io.py
-│       ├── visualization.py
-│       ├── nuclei_segmentation.py
-│       ├── celltype_assignment.py
-│       ├── region_analysis.py
-│       └── distance_analysis.py
-├── notebooks/
-│   ├── original_pipeline_notebook.ipynb
-│   └── pipeline_demo.ipynb
-├── .streamlit/
-│   └── config.toml
-├── requirements.txt
-├── README.md
-├── LICENSE
-├── CITATION.cff
-└── .gitignore
-```
-
-## What was preserved from the notebook
-
-- the general step order
-- the nuclei segmentation logic and parameter meanings
-- the marker positivity assignment strategy
-- the simple / expression-based cell-type logic
-- the region-building logic
-- the nearest-neighbor and boundary-distance logic
-- the figure style choices (overlay labels, scale bar, publication-style saved outputs)
-
-## What changed
-
-Only the notebook-specific interface layer was changed:
-
-- `ipywidgets` UI → Streamlit UI
-- global notebook variables → reusable Python modules
-- local-only path workflow → local-folder mode **plus** upload mode for hosted use
-- persistent saved files are written into `outs/`
-
-The analysis logic itself was kept as close as possible to the uploaded notebook.
 
 ## Installation
 
