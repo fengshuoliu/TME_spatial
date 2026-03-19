@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "TME Spatial Streamlit App"
+version: "0.1.0"
+date-released: 2026-03-19
+type: software
+authors:
+  - family-names: "Liu"
+    given-names: "Fengshuo"
+repository-code: "https://github.com/fengshuoliu/TME_spatial"
+license: "MIT"
+abstract: >-
+  Streamlit packaging of a TME spatial image-analysis workflow built from
+  ImageJ-exported text image files, including overlay generation, nuclei
+  segmentation, cell-type assignment, region analysis, and distance analysis.
