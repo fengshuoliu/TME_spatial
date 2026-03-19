@@ -1,12 +1,27 @@
-streamlit>=1.32
-numpy>=1.24
-pandas>=2.0
-matplotlib>=3.7
-scipy>=1.10
-scikit-image>=0.22
-joblib>=1.3
+# TME Spatial Streamlit app
+# Direct runtime Python dependencies inferred from app.py and src/tme_spatial/*.py
+# Recommended Python version: 3.11
+# These are the packages the code imports directly or uses for TIFF I/O fallbacks.
+
+streamlit>=1.32,<2.0
+numpy>=1.26,<2.0
+pandas>=2.1,<3.0
+matplotlib>=3.8,<4.0
+scipy>=1.11,<2.0
+scikit-image>=0.22,<1.0
+joblib>=1.3,<2.0
 tifffile>=2023.7
 imageio>=2.31
 Pillow>=10.0
-# Optional acceleration:
+
+# Optional acceleration / notebook-style thread setup support
+# The app can run without numba, but the original notebook environment referenced it.
 # numba>=0.59
+
+# Non-pip / system-level libraries often needed on macOS + Conda for scientific Python
+# These are NOT installed by pip requirements.txt; keep them documented here.
+# libgfortran5
+# libopenblas
+
+# Standard-library modules used by the code and therefore NOT listed above:
+# os, pathlib, json, shutil, traceback, uuid, typing, io, re, zipfile, dataclasses
