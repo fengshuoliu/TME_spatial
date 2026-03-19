@@ -1070,7 +1070,7 @@ def main():
     init_state()
     render_sidebar()
 
-    st.title("TME Spatial — Streamlit app")
+    st.title("TME Spatial")
     st.write(
         "This app packages your notebook pipeline into a Streamlit interface while keeping the original "
         "analysis logic as close as possible. Input files are the ImageJ-exported CSV/TXT text images "
