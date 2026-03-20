@@ -113,7 +113,7 @@ conda activate tme_spatial
 ```bash
 cd ~/TME_spatial
 ```
-Replace `D:\TME_spatial` with the actual path to your repository.
+Replace `~/TME_spatial` with the actual path to your repository.
 
 #### 3. Install dependencies
 
