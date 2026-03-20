@@ -101,11 +101,29 @@ Use **Python 3.11** when possible.
 
 From the repository root:
 
+#### 1. Create an environment through conda, and activate it
+
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip setuptools wheel
-python -m pip install -r requirements.txt
+conda create -n tme_spatial python=3.11 -y
+conda activate tme_spatial
+```
+
+#### 2. Move to the repository folder
+
+```bash
+cd path to folder/TME_spatial
+```
+
+#### 3. Install dependencies
+
+```bash
+pip install -r requirement.txt
+```
+
+#### 4. Launch the app
+
+```bash
+streamlit run app.py
 ```
 
 ---
