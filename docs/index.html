@@ -201,15 +201,15 @@
         <div class="card-grid two">
           <article class="code-card">
             <h3>macOS / Linux</h3>
-            <pre><code>python -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
-python -m streamlit run app.py</code></pre>
+            <pre><code>conda create -n tme_spatial python=3.11 -y
+conda activate tme_spatial
+cd ~/TME_spatial
+pip install -r requirement.txt
+streamlit run app.py</code></pre>
           </article>
           <article class="code-card">
             <h3>Windows PowerShell</h3>
-            <pre><code>py -3.11 -m venv .venv
+            <pre><code>py -3.11 -m venv tme_spatial
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
