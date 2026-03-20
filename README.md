@@ -29,13 +29,6 @@ Use Python 3.10 or newer.
 pip install -r requirements.txt
 ```
 
-Optional acceleration:
-
-```bash
-pip install numba
-```
-
-The app works without `numba`; it will simply use the pure-Python fallback for the buffer-zone voting step.
 
 ## Run locally
 
@@ -47,12 +40,7 @@ streamlit run app.py
 
 ## App workflow
 
-### 1. Inputs & config
-
-Choose either:
-
-- **Local folder path**, then click **Load folder files**
-- **Upload CSV/TXT files**
+### 1. Upload CSV/TXT files
 
 Then:
 
