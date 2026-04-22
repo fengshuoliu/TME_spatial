@@ -155,6 +155,21 @@ def build_celltype_cmap(celltype_cfg: Sequence[Dict[str, Any]]) -> ListedColorma
     return ListedColormap(ct_rgb)
 
 
+def save_figure_svg_and_png(fig, save_path: Path | None = None, png_dpi: int = 300) -> None:
+    if not save_path:
+        return
+    save_path = Path(save_path)
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+    if save_path.suffix.lower() == ".png":
+        png_path = save_path
+        svg_path = save_path.with_suffix(".svg")
+    else:
+        svg_path = save_path.with_suffix(".svg")
+        png_path = save_path.with_suffix(".png")
+    fig.savefig(str(svg_path), bbox_inches="tight", pad_inches=0)
+    fig.savefig(str(png_path), dpi=png_dpi, bbox_inches="tight", pad_inches=0)
+
+
 def overlay_multi_channels(
     df,
     shapes,
@@ -203,9 +218,7 @@ def overlay_multi_channels(
     fig.subplots_adjust(left=0, right=1, bottom=0, top=1)
 
     if save_path:
-        save_path = Path(save_path)
-        save_path.parent.mkdir(parents=True, exist_ok=True)
-        fig.savefig(str(save_path), dpi=600, bbox_inches="tight", pad_inches=0)
+        save_figure_svg_and_png(fig, save_path=Path(save_path), png_dpi=300)
 
     return fig, rgb
 
@@ -246,9 +259,7 @@ def plot_split_channels(
     fig.subplots_adjust(left=0, right=1, bottom=0, top=1, wspace=0.02, hspace=0.02)
 
     if save_path:
-        save_path = Path(save_path)
-        save_path.parent.mkdir(parents=True, exist_ok=True)
-        fig.savefig(str(save_path), dpi=600, bbox_inches="tight", pad_inches=0)
+        save_figure_svg_and_png(fig, save_path=Path(save_path), png_dpi=300)
 
     return fig
 

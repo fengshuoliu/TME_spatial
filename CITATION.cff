@@ -1,6 +1,6 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
-title: "TME Spatial Streamlit App"
+message: "If you use TME Spatial, please cite the software and the associated Cell article below."
+title: "TME Spatial"
 version: "0.1.0"
 date-released: 2026-03-19
 type: software
@@ -10,6 +10,75 @@ authors:
 repository-code: "https://github.com/fengshuoliu/TME_spatial"
 license: "MIT"
 abstract: >-
-  Streamlit packaging of a TME spatial image-analysis workflow built from
-  ImageJ-exported text image files, including overlay generation, nuclei
-  segmentation, cell-type assignment, region analysis, and distance analysis.
+  Streamlit application for spatial image analysis from ImageJ-exported text
+  images, including overlay generation, nuclei segmentation, cell type
+  assignment, neighborhood clustering, region analysis, cell distribution
+  analysis, and distance analysis.
+preferred-citation:
+  type: article
+  title: "Unbiased niche labeling maps immune-excluded niche in bone metastasis"
+  journal: "Cell"
+  year: 2026
+  doi: "10.1016/j.cell.2026.04.009"
+  note: "Published online April 2026."
+  authors:
+    - family-names: "Xu"
+      given-names: "Z."
+    - family-names: "Liu"
+      given-names: "F."
+    - family-names: "Ding"
+      given-names: "Y."
+    - family-names: "Pan"
+      given-names: "T."
+    - family-names: "Wu"
+      given-names: "Y.-H."
+    - family-names: "Han"
+      given-names: "Y."
+    - family-names: "Liu"
+      given-names: "J."
+    - family-names: "Bado"
+      given-names: "I. L."
+    - family-names: "Zhang"
+      given-names: "W."
+    - family-names: "Wu"
+      given-names: "L."
+    - family-names: "Gao"
+      given-names: "Y."
+    - family-names: "Hao"
+      given-names: "X."
+    - family-names: "Yu"
+      given-names: "L."
+    - family-names: "Li"
+      given-names: "Y."
+    - family-names: "Edwards"
+      given-names: "D. G."
+    - family-names: "Chan"
+      given-names: "H. L."
+    - family-names: "Aguirre"
+      given-names: "S."
+    - family-names: "Dieffenbach"
+      given-names: "M. W."
+    - family-names: "Chen"
+      given-names: "E."
+    - family-names: "Wang"
+      given-names: "S."
+    - family-names: "Shen"
+      given-names: "Y."
+    - family-names: "Hoffman"
+      given-names: "D."
+    - family-names: "Becerra Dominguez"
+      given-names: "L."
+    - family-names: "Rivas"
+      given-names: "C. H."
+    - family-names: "Chen"
+      given-names: "X."
+    - family-names: "Wang"
+      given-names: "H."
+    - family-names: "Kang"
+      given-names: "Y."
+    - family-names: "Gugala"
+      given-names: "Z."
+    - family-names: "Satcher"
+      given-names: "R. L."
+    - family-names: "Zhang"
+      given-names: "X. H.-F."

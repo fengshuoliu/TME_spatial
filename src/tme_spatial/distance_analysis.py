@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from pathlib import Path
 from typing import Any, Dict, List, Sequence, Tuple
 
@@ -12,10 +14,105 @@ import numpy as np
 import pandas as pd
 from scipy import ndimage as ndi
 from scipy.spatial import cKDTree
-from scipy.stats import ttest_rel
+from scipy.stats import ttest_ind, ttest_rel
 from skimage import segmentation
 
 from .io import load_any_tiff, safe_name, valid_pixel_size
+
+def _format_p(p_val: float) -> str:
+    if not np.isfinite(p_val):
+        return "p=NA"
+    if p_val < 1e-4:
+        return f"p={p_val:.1e}"
+    return f"p={p_val:.4f}"
+
+
+def _add_bracket(ax, x1: float, x2: float, y: float, h: float, text: str, fontsize: int = 11):
+    ax.plot([x1, x1, x2, x2], [y, y + h, y + h, y], lw=1.2, color="black")
+    ax.text((x1 + x2) / 2.0, y + h, text, ha="center", va="bottom", fontsize=fontsize, color="black")
+
+
+def _draw_black_boxplot(ax, data: Sequence[np.ndarray], labels: Sequence[str]) -> None:
+    ax.boxplot(
+        data,
+        labels=labels,
+        showfliers=False,
+        boxprops=dict(color="black", linewidth=1.2),
+        whiskerprops=dict(color="black", linewidth=1.2),
+        capprops=dict(color="black", linewidth=1.2),
+        medianprops=dict(color="black", linewidth=1.4),
+    )
+
+
+def _comparison_pairs(group_names: Sequence[str]) -> List[Tuple[int, int]]:
+    if len(group_names) == 2:
+        return [(0, 1)]
+    if len(group_names) > 2:
+        return [(0, i) for i in range(1, len(group_names))]
+    return []
+
+
+def _welch_group_ttests(
+    df_long: pd.DataFrame,
+    group_col: str,
+    value_col: str,
+    ordered_groups: Sequence[str],
+) -> pd.DataFrame:
+    rows: List[Dict[str, Any]] = []
+    for a, b in _comparison_pairs(ordered_groups):
+        ga, gb = ordered_groups[a], ordered_groups[b]
+        x = pd.to_numeric(
+            df_long.loc[df_long[group_col].astype(str) == str(ga), value_col],
+            errors="coerce",
+        ).to_numpy(float)
+        y = pd.to_numeric(
+            df_long.loc[df_long[group_col].astype(str) == str(gb), value_col],
+            errors="coerce",
+        ).to_numpy(float)
+        x = x[np.isfinite(x)]
+        y = y[np.isfinite(y)]
+        n_ref = int(len(x))
+        n_cmp = int(len(y))
+        if n_ref < 2 or n_cmp < 2:
+            t_val = np.nan
+            p_val = np.nan
+        else:
+            t_val, p_val = ttest_ind(x, y, equal_var=False, nan_policy="omit")
+        rows.append(
+            {
+                "ref": str(ga),
+                "cmp": str(gb),
+                "n_ref": n_ref,
+                "n_cmp": n_cmp,
+                "t": t_val,
+                "p": p_val,
+                "test": "welch_ttest",
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def _annotate_boxplot_pvalues(ax, data: Sequence[np.ndarray], stats_df: pd.DataFrame) -> None:
+    if not data or stats_df is None or len(stats_df) == 0:
+        return
+    all_y = np.concatenate([np.asarray(d)[np.isfinite(d)] for d in data if len(d) > 0]) if data else np.array([0.0])
+    if all_y.size == 0:
+        all_y = np.array([0.0])
+    y_max = float(np.nanmax(all_y)) if all_y.size else 1.0
+    y_min = float(np.nanmin(all_y)) if all_y.size else 0.0
+    span = max(1e-6, y_max - y_min)
+    base_y = y_max + 0.06 * span
+    step_h = 0.08 * span
+    bracket_h = 0.02 * span
+
+    for k, row in enumerate(stats_df.itertuples(index=False), start=0):
+        x1 = 1
+        x2 = k + 2
+        y_val = base_y + k * step_h
+        _add_bracket(ax, x1, x2, y_val, bracket_h, _format_p(getattr(row, "p", np.nan)))
+
+    ax.set_ylim(top=base_y + (len(stats_df) + 1) * step_h)
+
 
 
 def run_nearest_neighbor_analysis(
@@ -100,23 +197,12 @@ def run_nearest_neighbor_analysis(
             rows.append({"ref": qa, "cmp": qb, "n_pairs": n_pairs, "t": t_val, "p": p_val})
         return pd.DataFrame(rows), wide
 
-    def format_p(p_val: float) -> str:
-        if not np.isfinite(p_val):
-            return "p=NA"
-        if p_val < 1e-4:
-            return f"p={p_val:.1e}"
-        return f"p={p_val:.4f}"
-
-    def add_bracket(ax, x1: float, x2: float, y: float, h: float, text: str, fontsize: int = 11):
-        ax.plot([x1, x1, x2, x2], [y, y + h, y + h, y], lw=1.2, color="black")
-        ax.text((x1 + x2) / 2.0, y + h, text, ha="center", va="bottom", fontsize=fontsize)
-
     def plot_box_scatter(df_long: pd.DataFrame, title: str):
         qtypes = list(dict.fromkeys(df_long["query_type"].tolist()))
         data = [df_long.loc[df_long["query_type"] == q, "dist_um"].to_numpy(float) for q in qtypes]
 
         fig, ax = plt.subplots(figsize=(1.7 * max(3, len(qtypes)), 5))
-        ax.boxplot(data, labels=qtypes, showfliers=False)
+        _draw_black_boxplot(ax, data, qtypes)
 
         ttest_df, wide = paired_ttests(df_long, qtypes)
 
@@ -154,9 +240,9 @@ def run_nearest_neighbor_analysis(
 
             for k, (x1, x2) in enumerate(pairs):
                 row = ttest_df.iloc[k] if k < len(ttest_df) else None
-                text = format_p(row["p"]) if row is not None else "p=NA"
+                text = _format_p(row["p"]) if row is not None else "p=NA"
                 y_val = base_y + k * step_h
-                add_bracket(ax, x1, x2, y_val, bracket_h, text)
+                _add_bracket(ax, x1, x2, y_val, bracket_h, text)
 
             ax.set_ylim(top=base_y + (len(pairs) + 1) * step_h)
 
@@ -213,8 +299,8 @@ def run_nearest_neighbor_analysis(
 
     figure, ttest_df = plot_box_scatter(df_long, title=f"Nearest distances to target: {target_type}")
     if save_outputs:
-        figure.savefig(svg_path, dpi=600, bbox_inches="tight")
-        figure.savefig(png_path, dpi=600, bbox_inches="tight")
+        figure.savefig(svg_path, bbox_inches="tight")
+        figure.savefig(png_path, dpi=300, bbox_inches="tight")
 
     return {
         "distances": df_long,
@@ -230,6 +316,81 @@ def run_nearest_neighbor_analysis(
 
 def discover_boundary_masks(save_dir: Path, celltype_cfg: Sequence[Dict[str, Any]], df_cells: pd.DataFrame) -> List[Tuple[str, Path]]:
     save_dir = Path(save_dir)
+    registry_path = save_dir / "boundary_mask_registry.json"
+
+    def _source_label(source: str) -> str:
+        mapping = {
+            "computational_roi_identification": "computed",
+            "manual_boundary_adjustment": "adjusted",
+            "manual_roi_selection": "manual",
+        }
+        return mapping.get(str(source or "").strip(), str(source or "").strip() or "saved")
+
+    def _fallback_display_name(path: Path) -> str:
+        stem = path.stem.replace("_region_mask_uint8", "")
+        if "__" in stem:
+            stem = stem.split("__", 1)[0]
+        stem = stem.strip("_")
+        return stem or path.stem
+
+    if registry_path.exists():
+        try:
+            payload = json.loads(registry_path.read_text())
+        except Exception:
+            payload = {}
+        if isinstance(payload, dict):
+            records = payload.get("entries", [])
+        elif isinstance(payload, list):
+            records = payload
+        else:
+            records = []
+
+        valid_records = []
+        for record in records:
+            if not isinstance(record, dict):
+                continue
+            rel_path = str(record.get("mask_path", "")).strip()
+            if not rel_path:
+                continue
+            abs_path = save_dir / rel_path
+            if not abs_path.exists():
+                continue
+            valid_records.append(
+                {
+                    "display_name": str(record.get("display_name") or _fallback_display_name(abs_path)).strip() or _fallback_display_name(abs_path),
+                    "source": str(record.get("source") or ""),
+                    "mask_path": abs_path,
+                }
+            )
+
+        if valid_records:
+            name_counts: Dict[str, int] = {}
+            for record in valid_records:
+                key = record["display_name"].strip().lower()
+                name_counts[key] = name_counts.get(key, 0) + 1
+
+            labelled: List[Tuple[str, Path]] = []
+            used_labels: set[str] = set()
+            for record in sorted(
+                valid_records,
+                key=lambda rec: (
+                    rec["display_name"].lower(),
+                    rec["source"].lower(),
+                    rec["mask_path"].name.lower(),
+                ),
+            ):
+                display_name = record["display_name"].strip() or _fallback_display_name(record["mask_path"])
+                candidate = display_name
+                if name_counts.get(display_name.lower(), 0) > 1:
+                    candidate = f"{display_name} ({_source_label(record['source'])})"
+                suffix = 2
+                while candidate in used_labels:
+                    candidate = f"{display_name} ({_source_label(record['source'])} {suffix})"
+                    suffix += 1
+                used_labels.add(candidate)
+                labelled.append((candidate, record["mask_path"]))
+            return labelled
+
     ct_names = [ct["name"] for ct in celltype_cfg]
     present_types = sorted(set(df_cells["celltype"].astype(str)))
     ct_names = [ct for ct in ct_names if ct in present_types] or present_types
@@ -244,7 +405,7 @@ def discover_boundary_masks(save_dir: Path, celltype_cfg: Sequence[Dict[str, Any
     known_paths = {path for _, path in mask_candidates}
     for path in extra:
         if path not in known_paths:
-            mask_candidates.append((path.stem.replace("_region_mask_uint8", ""), path))
+            mask_candidates.append((_fallback_display_name(path), path))
 
     return mask_candidates
 
@@ -339,7 +500,14 @@ def run_boundary_distance_analysis(
         data = [df_long_local.loc[df_long_local["query_celltype"] == q, "dist_to_boundary_um"].to_numpy(float) for q in qtypes]
 
         fig, ax = plt.subplots(figsize=(1.7 * max(3, len(qtypes)), 5))
-        ax.boxplot(data, labels=qtypes, showfliers=False)
+        _draw_black_boxplot(ax, data, qtypes)
+
+        comparison_df = _welch_group_ttests(
+            df_long_local,
+            group_col="query_celltype",
+            value_col="dist_to_boundary_um",
+            ordered_groups=qtypes,
+        )
 
         rng = np.random.default_rng(0)
         for i, q in enumerate(qtypes, start=1):
@@ -351,11 +519,16 @@ def run_boundary_distance_analysis(
         ax.set_xlabel("Query cell type")
         ax.set_title(title)
         plt.xticks(rotation=30, ha="right")
-        plt.tight_layout()
-        return fig
 
+        if len(qtypes) >= 2:
+            _annotate_boxplot_pvalues(ax, data, comparison_df)
+
+        plt.tight_layout()
+        return fig, comparison_df
+
+    boundary_display_name = str(boundary_name).strip() or Path(boundary_mask_path).stem
     base = safe_name(
-        f"to_boundary__{Path(boundary_mask_path).stem}__from__{'__'.join(query_types)}__{region_filter}",
+        f"to_boundary__{boundary_display_name}__from__{'__'.join(query_types)}__{region_filter}",
         "boundary",
     )
     csv_path = save_dir / f"dist_to_boundary__{base}.csv"
@@ -365,13 +538,14 @@ def run_boundary_distance_analysis(
     if save_outputs:
         df_long.to_csv(csv_path, index=False)
 
-    figure = plot_box_scatter(df_long, title=f"Distance to boundary: {Path(boundary_mask_path).stem}")
+    figure, ttest_df = plot_box_scatter(df_long, title=f"Distance to boundary: {boundary_display_name}")
     if save_outputs:
-        figure.savefig(svg_path, dpi=600, bbox_inches="tight")
-        figure.savefig(png_path, dpi=600, bbox_inches="tight")
+        figure.savefig(svg_path, bbox_inches="tight")
+        figure.savefig(png_path, dpi=300, bbox_inches="tight")
 
     return {
         "distances": df_long,
+        "ttests": ttest_df,
         "figure": figure,
         "saved_paths": {
             "csv": csv_path,

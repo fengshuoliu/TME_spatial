@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>TME Spatial</string>
+	<key>CFBundleExecutable</key>
+	<string>tme_spatial_launcher</string>
+	<key>CFBundleGetInfoString</key>
+	<string>TME Spatial macOS launcher for the Streamlit app</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.tmespatial.macos.app</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>TME Spatial</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.0</string>
+	<key>CFBundleSpokenName</key>
+	<string>TME Spatial</string>
+	<key>CFBundleVersion</key>
+	<string>1.0.0</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.science</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>11.0</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright 2026 TME Spatial</string>
+</dict>
+</plist>

@@ -1,0 +1,22 @@
+#!/bin/bash
+set -euo pipefail
+
+APP_BUNDLE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+PROJECT_DIR="$(cd "$APP_BUNDLE_DIR/../.." && pwd)"
+LAUNCH_SCRIPT="$PROJECT_DIR/launch_tme_spatial_macos.sh"
+
+if [[ ! -x "$LAUNCH_SCRIPT" ]]; then
+  /usr/bin/osascript <<OSA
+  display dialog "Could not find the launcher script:\n$LAUNCH_SCRIPT" buttons {"OK"} default button "OK" with icon stop
+OSA
+  exit 1
+fi
+
+/usr/bin/osascript <<OSA
+set quotedProjectDir to quoted form of "$PROJECT_DIR"
+set quotedLaunchScript to quoted form of "$LAUNCH_SCRIPT"
+tell application "Terminal"
+  activate
+  do script "cd " & quotedProjectDir & "; " & quotedLaunchScript
+end tell
+OSA
