@@ -51,8 +51,6 @@ TME Spatial supports both a manual environment setup and a one-click launcher wo
 
 ### macOS manual installation
 
-![macOS installation walkthrough](docs/assets/instruction-media/01-macos-installation.gif)
-
 | Step | Command | Purpose |
 | --- | --- | --- |
 | 1 | `cd /path/to/TME_spatial` | Move into the repository root |
@@ -76,6 +74,8 @@ python -m streamlit run app.py
 
 ### macOS one-click installation
 
+![macOS installation walkthrough](docs/assets/instruction-media/01-macos-installation.gif)
+
 | Item | Behavior |
 | --- | --- |
 | `TME Spatial.app` | Opens Terminal and calls `launch_tme_spatial_macos.sh` from the repo root |
@@ -91,7 +91,6 @@ Notes:
 
 ### Windows manual installation
 
-![Windows installation walkthrough](docs/assets/instruction-media/01-windows-installation.gif)
 
 | Step | Command | Purpose |
 | --- | --- | --- |
@@ -105,6 +104,8 @@ Notes:
 | 8 | `python -m streamlit run app.py` | Start the app |
 
 ### Windows one-click installation
+
+![Windows installation walkthrough](docs/assets/instruction-media/01-windows-installation.gif)
 
 | Item | Behavior |
 | --- | --- |
