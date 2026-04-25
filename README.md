@@ -413,7 +413,7 @@ The Outputs section lists everything generated for the current session and lets 
 
 If you use TME Spatial, please cite the associated paper:
 
-> Xu Z, Liu F, Ding Y, Pan T, Wu Y-H, Han Y, Liu J, Bado IL, Zhang W, Wu L, Gao Y, Hao X, Yu L, Li Y, Edwards DG, Chan HL, Aguirre S, Dieffenbach MW, Chen E, Wang S, Shen Y, Hoffman D, Becerra Dominguez L, Rivas CH, Chen X, Wang H, Kang Y, Gugala Z, Satcher RL, Zhang XH-F. Unbiased niche labeling maps immune-excluded niche in bone metastasis. *Cell*. 2026. Published online April 2026. doi:10.1016/j.cell.2026.04.009
+> Xu Z*, Liu F*, Ding Y, Pan T, Wu Y-H, Han Y, Liu J, Bado IL, Zhang W, Wu L, Gao Y, Hao X, Yu L, Li Y, Edwards DG, Chan HL, Aguirre S, Dieffenbach MW, Chen E, Wang S, Shen Y, Hoffman D, Becerra Dominguez L, Rivas CH, Chen X, Wang H, Kang Y, Gugala Z, Satcher RL, Zhang XH-F. Unbiased niche labeling maps immune-excluded niche in bone metastasis. *Cell*. 2026. Published online April 2026. doi:10.1016/j.cell.2026.04.009
 
 The machine-readable citation is also stored in [`CITATION.cff`](CITATION.cff).
 
