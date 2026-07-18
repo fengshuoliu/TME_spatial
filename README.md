@@ -1,5 +1,9 @@
 # TME Spatial
 
+> [!IMPORTANT]
+> **TME Spatial is preserved as the historical prototype associated with published work.**
+> The actively maintained native application has been renamed **SpatialScope** and is now available from the [SpatialScope repository](https://github.com/fengshuoliu/SpatialScope). This repository and its website will remain online so citations and existing links continue to resolve.
+
 ## Project website
 
 [https://fengshuoliu.github.io/TME_spatial/](https://fengshuoliu.github.io/TME_spatial/)

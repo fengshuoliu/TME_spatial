@@ -32,6 +32,23 @@ body {
   line-height: 1.6;
 }
 
+.successor-notice {
+  padding: 14px clamp(20px, 4vw, 52px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  color: #ffffff;
+  background: #173f4b;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.successor-notice a {
+  color: #ffffff;
+  font-weight: 800;
+}
+
 img {
   display: block;
   width: 100%;
