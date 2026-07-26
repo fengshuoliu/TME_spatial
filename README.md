@@ -2,7 +2,7 @@
 
 > [!IMPORTANT]
 > **TME Spatial is preserved as the historical prototype associated with published work.**
-> The actively maintained native application has been renamed **SpatialScope** and is now available from the [SpatialScope repository](https://github.com/fengshuoliu/SpatialScope). This repository and its website will remain online so citations and existing links continue to resolve.
+> The actively maintained native application has been renamed **SpatialPlexomera** and is now available from the [SpatialPlexomera repository](https://github.com/fengshuoliu/SpatialPlexomera). This repository and its website will remain online so citations and existing links continue to resolve.
 
 ## Project website
 
